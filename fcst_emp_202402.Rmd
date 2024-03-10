@@ -1,4 +1,4 @@
----
+ ---
 title: "February Employment Forecast"
 output: html_notebook
 editor_options: 
@@ -7,7 +7,7 @@ editor_options:
 
 
 
-
+#Setting up the various packages we might use to make our forecast. 
 ```{r}
 library(tidyverse)
 library(fpp3)
@@ -28,6 +28,7 @@ library(report)
 setwd("/Users/davidflynn/OneDrive - North Dakota University System/Teaching/Econ 411/Spring 2024/")
 #PC Line
 #setwd("C:/Users/david.flynn/OneDrive - North Dakota University System/Institute/labor/")
+https://github.com/flynnecon/forecasting2024/edit/main/
 ```
 
 ```{r Employment data work}
