@@ -1,0 +1,94 @@
+---
+title: "February Employment Forecast"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+
+
+```{r}
+library(tidyverse)
+library(fpp3)
+library(dplyr)
+library(readxl)
+library(tidyr)
+library(tsibble)
+library(tsibbledata)
+library(lubridate)
+library(feasts)
+library(fable)
+library(knitr)
+library(ggstream)
+library(ggpubr)
+library(reshape2)
+library(report)
+#Mac Line
+setwd("/Users/davidflynn/OneDrive - North Dakota University System/Teaching/Econ 411/Spring 2024/")
+#PC Line
+#setwd("C:/Users/david.flynn/OneDrive - North Dakota University System/Institute/labor/")
+```
+
+```{r Employment data work}
+empdata202402 <- read_xlsx("emp-202401.xlsx", sheet="data")
+empdata202402 <- empdata202402[-c(1)]
+empdata202402$date <- seq(as.Date("2014-01-01"), as.Date("2024-01-01"), by="1 month")
+emp_tsbl202402 <- empdata202402 |> mutate(month=yearmonth(date)) |> as_tsibble(index=month)
+#colnames(emp_tsbl) = gsub(" ", "_",colnames(emp_tsbl))
+#empl <- melt(emp_tsbl,id.vars=c("date","month"),variable.name="state",value.name="empl")
+#empl <- empl[-c(1)]
+#empl_ts <- empl |> as_tsibble(key=c(state),index=c(month))
+
+
+#empl_train <- empl_ts |> filter(month<yearmonth("2020 Mar"))
+#empl_test <- empl_ts |> filter(month>yearmonth("2020 Feb"))
+```
+
+```{r plot}
+emp_tsbl202402 |> ggplot(aes(x=month,y=emplnsa)) + geom_line()
+```
+```{r decompose}
+emp_tsbl202402 |>
+  model(
+    STL(emplnsa ~ trend(window = 7) +
+                   season(window = "periodic"),
+    robust = TRUE)) |>
+  components() |>
+  autoplot()
+```
+
+
+
+```{r forecast}
+fit_dcmp <- emp_tsbl202402 |>
+  model(stlf = decomposition_model(
+    STL(emplnsa ~ trend(window = 7), robust = TRUE),
+    NAIVE(season_adjust)
+  ))
+fit_dcmp |>
+  forecast() |>
+  autoplot(emp_tsbl202402)+
+  labs(y = "Number of people",
+       title = "US employment")
+fit_out <-fit_dcmp |>
+  forecast()
+```
+
+
+
+
+```{r forecast}
+fit_dcmp2 <- emp_tsbl202402 |>
+  model(stlf = decomposition_model(
+    STL(emplnsa ~ trend(window = 7) + season(window="periodic"), robust = TRUE),
+    NAIVE(season_adjust)
+  ))
+fit_dcmp2 |>
+  forecast() |>
+  autoplot(emp_tsbl)+
+  labs(y = "Number of people",
+       title = "US employment")
+fit_out <-fit_dcmp |>
+  forecast()
+```
