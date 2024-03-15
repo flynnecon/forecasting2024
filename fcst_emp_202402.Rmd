@@ -1,4 +1,4 @@
- ---
+l ---
 title: "February Employment Forecast"
 output: html_notebook
 editor_options: 
@@ -46,10 +46,10 @@ emp_tsbl202402 <- empdata202402 |> mutate(month=yearmonth(date)) |> as_tsibble(i
 #empl_test <- empl_ts |> filter(month>yearmonth("2020 Feb"))
 ```
 
-```{r plot}
+```{r plot of employment}
 emp_tsbl202402 |> ggplot(aes(x=month,y=emplnsa)) + geom_line()
 ```
-```{r decompose}
+```{r decomposition work}
 emp_tsbl202402 |>
   model(
     STL(emplnsa ~ trend(window = 7) +
@@ -61,7 +61,7 @@ emp_tsbl202402 |>
 
 
 
-```{r forecast}
+```{r forecast by decomposition}
 fit_dcmp <- emp_tsbl202402 |>
   model(stlf = decomposition_model(
     STL(emplnsa ~ trend(window = 7), robust = TRUE),
@@ -70,24 +70,6 @@ fit_dcmp <- emp_tsbl202402 |>
 fit_dcmp |>
   forecast() |>
   autoplot(emp_tsbl202402)+
-  labs(y = "Number of people",
-       title = "US employment")
-fit_out <-fit_dcmp |>
-  forecast()
-```
-
-
-
-
-```{r forecast}
-fit_dcmp2 <- emp_tsbl202402 |>
-  model(stlf = decomposition_model(
-    STL(emplnsa ~ trend(window = 7) + season(window="periodic"), robust = TRUE),
-    NAIVE(season_adjust)
-  ))
-fit_dcmp2 |>
-  forecast() |>
-  autoplot(emp_tsbl)+
   labs(y = "Number of people",
        title = "US employment")
 fit_out <-fit_dcmp |>
