@@ -24,31 +24,21 @@ library(ggstream)
 library(ggpubr)
 library(reshape2)
 library(report)
-#Mac Line
-setwd("/Users/davidflynn/OneDrive - North Dakota University System/Teaching/Econ 411/Spring 2024/")
-#PC Line
-#setwd("C:/Users/david.flynn/OneDrive - North Dakota University System/Institute/labor/")
-https://github.com/flynnecon/forecasting2024/edit/main/
+library(readr)
+urlfile="https://raw.githubusercontent.com/flynnecon/forecasting2024/main/emp-202401.csv"
 ```
-
+#Getting the data read into R and then made into our time series analysis format. Note we do not need a training or test data division with the fact we are looking at a forecast 1 period ahead.
 ```{r Employment data work}
-empdata202402 <- read_xlsx("emp-202401.xlsx", sheet="data")
+empdata202402 <- read_csv(url(urlfile))
 empdata202402 <- empdata202402[-c(1)]
 empdata202402$date <- seq(as.Date("2014-01-01"), as.Date("2024-01-01"), by="1 month")
 emp_tsbl202402 <- empdata202402 |> mutate(month=yearmonth(date)) |> as_tsibble(index=month)
-#colnames(emp_tsbl) = gsub(" ", "_",colnames(emp_tsbl))
-#empl <- melt(emp_tsbl,id.vars=c("date","month"),variable.name="state",value.name="empl")
-#empl <- empl[-c(1)]
-#empl_ts <- empl |> as_tsibble(key=c(state),index=c(month))
-
-
-#empl_train <- empl_ts |> filter(month<yearmonth("2020 Mar"))
-#empl_test <- empl_ts |> filter(month>yearmonth("2020 Feb"))
 ```
-
+#Just plotting employment here, the not seasoanlly adjusted biut. 
 ```{r plot of employment}
 emp_tsbl202402 |> ggplot(aes(x=month,y=emplnsa)) + geom_line()
 ```
+#Looking at the time series decomposition.
 ```{r decomposition work}
 emp_tsbl202402 |>
   model(
@@ -59,8 +49,7 @@ emp_tsbl202402 |>
   autoplot()
 ```
 
-
-
+#Take the decomposition model and then a naive forecast will see you through to the outcome. 
 ```{r forecast by decomposition}
 fit_dcmp <- emp_tsbl202402 |>
   model(stlf = decomposition_model(
