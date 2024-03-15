@@ -1,4 +1,4 @@
-
+*Forecast model for us employment (nsa) for February release. 
 
 import delimited https://raw.githubusercontent.com/flynnecon/forecasting2024/main/emp-202401.csv, clear
 gen time = tm(2014Jan) + _n-1
