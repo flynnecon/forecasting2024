@@ -4,16 +4,16 @@ format time %tm
 tsset time
 *Date adjustements now for the season plots in q3 and q4
 gen daytime = dofm(time)
-format daytime = %td
+format daytime %td
 gen month = month(daytime)
 gen year = year(daytime)
 
 *Question 1
-tsline usemplnsa, name("complete-q1", replace)
+tsline usemplnsa, name("completeq1", replace)
 *Question 2
-tsline usemplnsa if time > tm(2000m12), name("since2001-q2, replace)
+tsline usemplnsa if time > tm(2000m12), name("since2001q2, replace)
 
 
 separate usemplnsa, by(year)
-twoway line usemplnsa**** month if year>=2006 & year <= 2012, legend(off) c(L) sy() name("seasplot-q3", replace)
-twoway line usemplnsa**** month if year>= 2019, legend(off) c(L) sy() name("seasplot-q4",replace) 
+twoway line usemplnsa**** month if year>=2006 & year <= 2012, legend(off) c(L) sy() name("seasplotq3", replace)
+twoway line usemplnsa**** month if year>= 2019, legend(off) c(L) sy() name("seasplotq4",replace) 
