@@ -11,7 +11,7 @@ gen year = year(daytime)
 *Question 1
 tsline usemplnsa, name("completeq1", replace)
 *Question 2
-tsline usemplnsa if time > tm(2000m12), name("since2001q2, replace)
+tsline usemplnsa if time > tm(2000m12), name("since2001q2", replace)
 
 
 separate usemplnsa, by(year)
