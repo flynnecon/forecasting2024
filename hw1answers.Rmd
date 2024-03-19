@@ -1,0 +1,58 @@
+---
+title: "Homework 1 Answers & Code"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r setup}
+library(tidyverse)
+library(fpp3)
+library(dplyr)
+library(readxl)
+library(tidyr)
+library(tsibble)
+library(tsibbledata)
+library(lubridate)
+library(feasts)
+library(fable)
+library(knitr)
+library(ggstream)
+library(ggpubr)
+library(reshape2)
+library(report)
+library(readr)
+```
+
+Now set up the data file. 
+```{r enter the data}
+urlfile="https://raw.githubusercontent.com/flynnecon/forecasting2024/main/usempldata_20240123.csv"
+empdata <- read_csv(urlfile)
+empdata <- empdata[-c(1)]
+empdata$date <- seq(as.Date("1948-01-01"), as.Date("2023-12-01"), by="1 month")
+emp_tsbl <- empdata |> mutate(month=yearmonth(date)) |> as_tsibble(index=month)
+```
+
+
+
+```{r first graph}
+emp_tsbl |> ggplot(aes(x=month,y=usemplnsa)) + geom_line(color="blue") + theme_bw()
+
+```
+
+```{r second graph}
+emp_tsbl |> filter(month > yearmonth("2000 Dec")) |> ggplot(aes(x=month,y=usemplnsa)) + geom_line(color="green") + theme_bw()
+```
+
+```{r third graph}
+emp_tsbl |> filter(month > yearmonth("2005 Dec") & month < yearmonth("2013 Jan")) |> gg_season(usemplnsa, labels="left") + theme_bw()
+```
+
+```{r fourth graph}
+emp_tsbl |> filter(month > yearmonth("2018 Dec")) |> gg_season(usemplnsa, labels="left") + theme_bw()
+```
+
+
+
